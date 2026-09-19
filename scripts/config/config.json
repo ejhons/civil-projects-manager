@@ -1,0 +1,103 @@
+{
+  "formato_data": "yyyy.MM.dd",
+  "pasta_bkp": "_BKP",
+  "prefixo_pdf_temp": "_PDF",
+  "formatos_nome": {
+    "entrega": "{sigla} {disciplina} {data} {revisao}",
+    "recebido": "{data} - {identificacao} - {fonte}",
+    "backup_revisao": "PROJETO ENTREGUE {revisao}"
+  },
+  "extensoes_revisao": [
+    ".dwg",
+    ".dxf",
+    ".xlsx",
+    ".xls",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".tif",
+    ".tiff"
+  ],
+  "estrutura_base": [
+    "00.BASE\\_BACKUP",
+    "00.BASE\\01.QTO",
+    "_RECEBIDOS",
+    "_REFERÊNCIAS",
+    "_ENVIADOS"
+  ],
+  "estrutura_entrega_base": [
+    "01.DESENHOS\\01.PDF",
+    "01.DESENHOS\\02.DWG\\01.IMG",
+    "02.DOCUMENTOS\\01.ANEXOS"
+  ],
+  "disciplinas": {
+    "TERR": {
+      "aliases": [
+        "TER",
+        "TERR"
+      ],
+      "pasta": "01.TERRAPLENAGEM",
+      "subpastas": [
+        "01.DESENHOS\\_BKP",
+        "01.DESENHOS\\_PDF RXX",
+        "01.DESENHOS\\01.IMG",
+        "01.DESENHOS\\02.BLK",
+        "02.DOCUMENTOS\\00.BRIEFING",
+        "02.DOCUMENTOS\\01.CUBAÇÃO",
+        "02.DOCUMENTOS\\02.PAVIMENTAÇÃO",
+        "02.DOCUMENTOS\\03.ANEXOS",
+        "02.DOCUMENTOS\\04.QUANTITATIVOS",
+        "03.CARDENETA DE CAMPO",
+        "04.BIM"
+      ],
+      "entrega_extras": [
+        "02.DOCUMENTOS\\01.CUBAÇÃO"
+      ]
+    },
+    "DRN": {
+      "aliases": [
+        "DRN",
+        "DRE",
+        "DREN"
+      ],
+      "pasta": "02.DRENAGEM",
+      "subpastas": [
+        "01.DESENHOS\\01.IMG",
+        "01.DESENHOS\\02.BLK",
+        "02.DIMENSIONAMENTO",
+        "03.BIM"
+      ],
+      "entrega_extras": []
+    },
+    "SES": {
+      "aliases": [
+        "SES",
+        "ESG"
+      ],
+      "pasta": "03.ESGOTO",
+      "subpastas": [
+        "01.DESENHOS\\01.IMG",
+        "01.DESENHOS\\02.BLK",
+        "02.DOCUMENTOS",
+        "03.REVIT"
+      ],
+      "entrega_extras": []
+    },
+    "SAA": {
+      "aliases": [
+        "SAA"
+      ],
+      "pasta": "04.REDE DE ÁGUA",
+      "subpastas": [
+        "01.DESENHOS",
+        "02.DOCUMENTOS\\00.BRIEFING",
+        "02.DOCUMENTOS\\01.QUANTITATIVOS",
+        "03.EPANET",
+        "04.BIM"
+      ],
+      "entrega_extras": [
+        "03.EPANET"
+      ]
+    }
+  }
+}

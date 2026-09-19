@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Overview de Projetos</title>
+  <!-- Exemplo para o favicon (ícone da aba do navegador) -->
+  <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --panel: #ffffff;
+      --ink: #2b2b28;
+      --ink-soft: #6b675f;
+      --line: #e2ddd2;
+      --accent: #3d5a4f;
+      --accent-soft: #e8efe9;
+      --warn: #a4432f;
+      --warn-soft: #f6e9e6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 32px 20px 80px;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 4px;
+      font-weight: 600;
+    }
+
+    .sub {
+      color: var(--ink-soft);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    button {
+      font: inherit;
+      font-size: 13px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    input[type=text] {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fdfcfa;
+      min-width: 220px;
+    }
+
+    input[type=file] {
+      display: none;
+    }
+
+    .status {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+
+    .card .num {
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .card .label {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+    }
+
+    section h2 {
+      font-size: 14px;
+      margin: 0 0 14px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      font-size: 11px;
+      color: var(--ink-soft);
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    th:hover {
+      color: var(--ink);
+    }
+
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    tr.projrow {
+      cursor: pointer;
+    }
+
+    tr.projrow:hover {
+      background: var(--accent-soft);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      margin: 1px 3px 1px 0;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid #d3e2da;
+    }
+
+    .empty {
+      color: var(--ink-soft);
+      font-size: 13px;
+      padding: 24px 0;
+      text-align: center;
+    }
+
+    .detalhe {
+      background: #fbfaf7;
+    }
+
+    .detalhe td {
+      padding: 16px 18px;
+    }
+
+    .detalhe table {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .detalhe th {
+      background: #f2f0ea;
+    }
+
+    .semmeta {
+      border: 1px dashed #d9b8ad;
+      background: var(--warn-soft);
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #7a3625;
+      margin-top: 8px;
+    }
+
+    .semmeta strong {
+      color: var(--warn);
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .chip-list span {
+      background: #fff;
+      border: 1px solid #e3c4bc;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .arrow {
+      display: inline-block;
+      transition: transform .15s;
+      margin-right: 4px;
+      color: var(--ink-soft);
+    }
+
+    .arrow.open {
+      transform: rotate(90deg);
+    }
+
+    .btn-editar {
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      color: var(--accent);
+    }
+
+    .btn-editar:hover {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- Exemplo para adicionar um ícone na página -->
+    <!-- <img src="../assets/icons/logo.png" alt="Logo do Gerenciador"> -->
+    <h1>Overview de projetos</h1>
+    <div class="sub">Selecione a pasta "Projetos em Addamento" uma vez — o navegador lembra dela nas próximas visitas.
+    </div>
+
+    <div class="toolbar">
+      <button class="primary" id="btnSelecionar">Selecionar pasta de projetos</button>
+      <button id="btnRetomar" style="display:none;">Continuar com a pasta salva</button>
+      <input type="text" id="busca" placeholder="Buscar por sigla, cliente, localidade, disciplina..."
+        style="display:none;">
+      <span class="status" id="status">Nenhuma pasta selecionada</span>
+    </div>
+
+    <div id="conteudo" style="display:none;">
+      <div class="cards" id="cards"></div>
+
+      <section>
+        <h2>Projetos</h2>
+        <table id="tabelaProjetos">
+          <thead>
+            <tr>
+              <th data-k="sigla">Sigla</th>
+              <th data-k="numero">Número</th>
+              <th data-k="cliente">Cliente</th>
+              <th data-k="localidade">Localidade</th>
+              <th data-k="disciplinas">Disciplinas</th>
+              <th data-k="qtdEntregas">Entregas</th>
+              <th data-k="ultimaEntrega">Última entrega</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="corpoProjetos"></tbody>
+        </table>
+        <div class="empty" id="projetosVazio" style="display:none;">Nenhum projeto encontrado com esse filtro.</div>
+      </section>
+
+      <section id="secaoSemMeta" style="display:none;">
+        <h2>Pastas sem _metadata.json</h2>
+        <div class="semmeta">
+          <strong id="qtdSemMeta"></strong> pasta(s) de projeto sem metadados ainda. Rode o
+          <code>criar_metadata_retroativo.bat</code> para gerar.
+          <div class="chip-list" id="listaSemMeta"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    let projetos = [];   // { pasta, meta }
+    let semMeta = [];    // nomes de pasta sem _metadata.json
+    let ordenacao = { chave: 'sigla', dir: 1 };
+    let linhaAberta = null;
+
+    const el = (id) => document.getElementById(id);
+
+    // ---------- Guarda a pasta escolhida entre sessoes (IndexedDB) ----------
+    const DB_NOME = 'addamento_config';
+    const DB_STORE = 'handles';
+    const CHAVE_PASTA = 'pastaProjetos';
+
+    function idbAbrir() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NOME, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    async function idbSet(chave, valor) {
+      const db = await idbAbrir();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_STORE, 'readwrite');
+        tx.objectStore(DB_STORE).put(valor, chave);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+    async function idbGet(chave) {
+      const db = await idbAbrir();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_STORE, 'readonly');
+        const req = tx.objectStore(DB_STORE).get(chave);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    if (!window.showDirectoryPicker) {
+      el('status').textContent = 'Este navegador não suporta selecionar pastas (use Chrome ou Edge).';
+      el('btnSelecionar').disabled = true;
+    }
+
+    el('btnSelecionar').addEventListener('click', async () => {
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        await idbSet(CHAVE_PASTA, dirHandle);
+        el('btnRetomar').style.display = 'none';
+        await processarPasta(dirHandle);
+      } catch (e) {
+        if (e.name !== 'AbortError') alert('Não foi possível ler a pasta: ' + e.message);
+      }
+    });
+
+    el('btnRetomar').addEventListener('click', async () => {
+      const handle = await idbGet(CHAVE_PASTA);
+      if (!handle) return;
+      try {
+        const perm = await handle.requestPermission({ mode: 'read' });
+        if (perm === 'granted') {
+          el('btnRetomar').style.display = 'none';
+          await processarPasta(handle);
+        } else {
+          el('status').textContent = 'Permissão não concedida para a pasta salva.';
+        }
+      } catch (e) {
+        alert('Não foi possível reabrir a pasta salva: ' + e.message);
+      }
+    });
+
+    async function tentarRetomarPastaSalva() {
+      if (!window.showDirectoryPicker) return;
+      try {
+        const handle = await idbGet(CHAVE_PASTA);
+        if (!handle) return;
+        const perm = await handle.queryPermission({ mode: 'read' });
+        if (perm === 'granted') {
+          el('status').textContent = 'Carregando pasta salva: ' + handle.name + '...';
+          await processarPasta(handle);
+        } else {
+          el('btnRetomar').style.display = 'inline-block';
+          el('btnRetomar').textContent = 'Continuar com "' + handle.name + '"';
+          el('status').textContent = 'Pasta salva encontrada — clique para continuar (o navegador exige a confirmação).';
+        }
+      } catch (e) { /* sem pasta salva ainda, segue fluxo normal */ }
+    }
+
+    async function processarPasta(dirHandle) {
+      el('status').textContent = 'Lendo projetos em "' + dirHandle.name + '"...';
+
+      projetos = [];
+      semMeta = [];
+
+      for await (const [nome, handle] of dirHandle.entries()) {
+        if (handle.kind !== 'directory') continue;
+        if (nome.startsWith('_') || nome.startsWith('.')) continue;
+
+        try {
+          const metaHandle = await handle.getFileHandle('_metadata.json');
+          const texto = await (await metaHandle.getFile()).text();
+          const meta = JSON.parse(texto);
+          projetos.push({ pasta: nome, meta });
+        } catch (e) {
+          semMeta.push(nome);
+        }
+      }
+
+      el('status').textContent = `${projetos.length} projeto(s) com metadados, ${semMeta.length} sem metadados — pasta: ${dirHandle.name}`;
+      el('conteudo').style.display = 'block';
+      el('busca').style.display = 'inline-block';
+      render();
+    }
+
+    el('busca').addEventListener('input', render);
+
+    document.querySelectorAll('#tabelaProjetos th').forEach(th => {
+      th.addEventListener('click', () => {
+        const chave = th.dataset.k;
+        if (ordenacao.chave === chave) ordenacao.dir *= -1;
+        else { ordenacao.chave = chave; ordenacao.dir = 1; }
+        render();
+      });
+    });
+
+    function resumoProjeto(p) {
+      const entregas = p.meta.entregas || [];
+      const datas = entregas.map(e => e.data).filter(Boolean).sort();
+      return {
+        sigla: p.meta.sigla || p.pasta,
+        numero: p.meta.numero || '',
+        cliente: p.meta.cliente || '',
+        localidade: p.meta.localidade || '',
+        disciplinas: p.meta.disciplinas || [],
+        qtdEntregas: entregas.length,
+        ultimaEntrega: datas.length ? datas[datas.length - 1] : ''
+      };
+    }
+
+    function render() {
+      const filtro = (el('busca').value || '').toLowerCase();
+
+      let lista = projetos.map(p => ({ ...p, r: resumoProjeto(p) }));
+
+      if (filtro) {
+        lista = lista.filter(p => {
+          const alvo = [p.r.sigla, p.r.numero, p.r.cliente, p.r.localidade, ...p.r.disciplinas, p.pasta]
+            .join(' ').toLowerCase();
+          return alvo.includes(filtro);
+        });
+      }
+
+      lista.sort((a, b) => {
+        let va = a.r[ordenacao.chave], vb = b.r[ordenacao.chave];
+        if (ordenacao.chave === 'qtdEntregas') { va = Number(va); vb = Number(vb); }
+        if (Array.isArray(va)) va = va.join(',');
+        if (Array.isArray(vb)) vb = vb.join(',');
+        va = (va ?? '').toString().toLowerCase();
+        vb = (vb ?? '').toString().toLowerCase();
+        if (va < vb) return -1 * ordenacao.dir;
+        if (va > vb) return 1 * ordenacao.dir;
+        return 0;
+      });
+
+      renderCards(lista);
+      renderTabela(lista);
+      renderSemMeta();
+    }
+
+    function renderCards(lista) {
+      const totalEntregas = lista.reduce((s, p) => s + p.r.qtdEntregas, 0);
+      const discCount = {};
+      lista.forEach(p => p.r.disciplinas.forEach(d => discCount[d] = (discCount[d] || 0) + 1));
+      const discTop = Object.entries(discCount).sort((a, b) => b[1] - a[1])[0];
+
+      el('cards').innerHTML = `
+    <div class="card"><div class="num">${lista.length}</div><div class="label">Projetos</div></div>
+    <div class="card"><div class="num">${totalEntregas}</div><div class="label">Entregas registradas</div></div>
+    <div class="card"><div class="num">${semMeta.length}</div><div class="label">Sem metadados</div></div>
+    <div class="card"><div class="num">${discTop ? discTop[0] : '—'}</div><div class="label">Disciplina mais comum${discTop ? ' (' + discTop[1] + ')' : ''}</div></div>
+  `;
+    }
+
+    function renderTabela(lista) {
+      const corpo = el('corpoProjetos');
+      corpo.innerHTML = '';
+      el('projetosVazio').style.display = lista.length ? 'none' : 'block';
+
+      lista.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.className = 'projrow';
+        const discBadges = p.r.disciplinas.map(d => `<span class="badge">${d}</span>`).join('') || '—';
+        tr.innerHTML = `
+      <td><span class="arrow">▸</span>${p.r.sigla}</td>
+      <td>${p.r.numero}</td>
+      <td>${p.r.cliente || '—'}</td>
+      <td>${p.r.localidade || '—'}</td>
+      <td>${discBadges}</td>
+      <td>${p.r.qtdEntregas}</td>
+      <td>${p.r.ultimaEntrega || '—'}</td>
+      <td><button class="btn-editar" type="button">✎ Editar</button></td>
+    `;
+        tr.querySelector('.btn-editar').addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          editarMetadados(p);
+        });
+        tr.addEventListener('click', () => toggleDetalhe(tr, p));
+        corpo.appendChild(tr);
+      });
+    }
+
+    function toggleDetalhe(tr, p) {
+      if (linhaAberta && linhaAberta.tr._chave !== tr._chave) {
+        linhaAberta.detalheTr.remove();
+        linhaAberta.tr.querySelector('.arrow').classList.remove('open');
+      }
+
+      if (linhaAberta && linhaAberta.tr === tr) {
+        linhaAberta.detalheTr.remove();
+        tr.querySelector('.arrow').classList.remove('open');
+        linhaAberta = null;
+        return;
+      }
+
+      tr.querySelector('.arrow').classList.add('open');
+      const detalheTr = document.createElement('tr');
+      detalheTr.className = 'detalhe';
+      const td = document.createElement('td');
+      td.colSpan = 8;
+
+      const entregas = (p.meta.entregas || []);
+      if (!entregas.length) {
+        td.innerHTML = '<div style="color:var(--ink-soft);">Nenhuma entrega registrada para este projeto.</div>';
+      } else {
+        const linhas = entregas
+          .slice()
+          .sort((a, b) => (a.data || '').localeCompare(b.data || '') || (a.revisao || '').localeCompare(b.revisao || ''))
+          .map(en => `
+        <tr>
+          <td><span class="badge">${en.disciplina || '—'}</span></td>
+          <td>${en.data || '—'}</td>
+          <td>${en.revisao || '—'}</td>
+          <td>${en.responsavel || '—'}</td>
+          <td>${en.observacoes || '—'}</td>
+        </tr>
+      `).join('');
+        td.innerHTML = `
+      <table>
+        <thead><tr><th>Disciplina</th><th>Data</th><th>Revisão</th><th>Responsável</th><th>Observações</th></tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    `;
+      }
+
+      detalheTr.appendChild(td);
+      tr.after(detalheTr);
+      linhaAberta = { tr, detalheTr };
+    }
+
+    function renderSemMeta() {
+      el('secaoSemMeta').style.display = semMeta.length ? 'block' : 'none';
+      el('qtdSemMeta').textContent = semMeta.length;
+      el('listaSemMeta').innerHTML = semMeta.map(n => `<span>${n}</span>`).join('');
+    }
+
+    function editarMetadados(p) {
+      // Abre o editor sinalizando qual projeto focar assim que a pasta for selecionada la.
+      const url = 'editor_metadados.html?foco=' + encodeURIComponent(p.pasta);
+      const win = window.open(url, '_blank');
+      if (!win) {
+        alert('O navegador bloqueou a abertura do editor. Permita pop-ups para esta pagina e tente novamente.');
+      }
+    }
+
+    tentarRetomarPastaSalva();
+
+  </script>
+</body>
+
+</html>

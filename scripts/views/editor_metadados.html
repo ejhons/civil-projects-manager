@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Editor de Metadados de Projeto</title>
+  <!-- Exemplo para o favicon (ícone da aba do navegador) -->
+  <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico">
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --panel: #ffffff;
+      --ink: #2b2b28;
+      --ink-soft: #6b675f;
+      --line: #e2ddd2;
+      --accent: #3d5a4f;
+      --accent-soft: #e8efe9;
+      --danger: #a4432f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 32px 20px 80px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0 0 4px;
+      font-weight: 600;
+    }
+
+    .sub {
+      color: var(--ink-soft);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .toolbar .status {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+
+    button,
+    .btn {
+      font: inherit;
+      font-size: 13px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    button.danger {
+      background: #fff;
+      color: var(--danger);
+      border-color: #e3c4bc;
+    }
+
+    button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    input[type=file] {
+      display: none;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+    }
+
+    section h2 {
+      font-size: 14px;
+      margin: 0 0 16px;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    input[type=text] {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      font-size: 14px;
+      background: #fdfcfa;
+    }
+
+    input[type=text]:focus {
+      outline: 2px solid var(--accent-soft);
+      border-color: var(--accent);
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+      background: #fdfcfa;
+    }
+
+    .chip.on {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .projlist {
+      max-height: 340px;
+      overflow-y: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .projrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+    }
+
+    .projrow:last-child {
+      border-bottom: none;
+    }
+
+    .projrow:hover {
+      background: var(--accent-soft);
+    }
+
+    .projrow.ativo {
+      background: var(--accent-soft);
+    }
+
+    .projrow .nome {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .projrow .sub {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+
+    .badge-falta {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: #f6e9e6;
+      color: #a4432f;
+      border: 1px solid #e3c4bc;
+      white-space: nowrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: none;
+      color: var(--ink-soft);
+      border-bottom: 1px solid var(--line);
+      padding: 6px 8px;
+      font-weight: 600;
+    }
+
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    td input[type=text] {
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .rowbtn {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 6px;
+    }
+
+    .empty {
+      color: var(--ink-soft);
+      font-size: 13px;
+      padding: 16px 0;
+      text-align: center;
+    }
+
+    .addrow {
+      margin-top: 12px;
+    }
+
+    select {
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      font-size: 13px;
+      width: 100%;
+      background: #fdfcfa;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>Editor de metadados de projeto</h1>
+    <div class="sub">Selecione a pasta "Projetos em Addamento" uma vez — o navegador lembra dela nas próximas visitas —
+      escolha o projeto e edite os metadados pelos campos abaixo.</div>
+
+    <div class="toolbar">
+      <button class="primary" id="btnPasta">Selecionar pasta de projetos</button>
+      <button id="btnRetomarPasta" style="display:none;">Continuar com a pasta salva</button>
+      <button id="btnAbrir">Abrir um _metadata.json avulso</button>
+      <button id="btnNovo">Começar em branco</button>
+      <button class="primary" id="btnSalvar" disabled>Salvar</button>
+      <span class="status" id="status">Nenhum arquivo aberto</span>
+    </div>
+    <div id="bannerFoco" class="hint" style="display:none; margin:-12px 0 20px;"></div>
+    <input type="file" id="fileInput" accept=".json">
+
+    <section id="secaoProjetos" style="display:none;">
+      <h2>Escolher projeto</h2>
+      <div class="field full" style="margin-bottom:12px;">
+        <input type="text" id="buscaProjeto" placeholder="Buscar por sigla, nome da pasta ou cliente...">
+      </div>
+      <div class="projlist" id="listaProjetos"></div>
+    </section>
+
+    <div id="conteudo" style="display:none;">
+      <section>
+        <h2>Dados do projeto</h2>
+        <div class="grid">
+          <div class="field"><label>Número</label><input type="text" id="f_numero"></div>
+          <div class="field"><label>Código do cliente</label><input type="text" id="f_codigo_cliente"></div>
+          <div class="field"><label>Sigla</label><input type="text" id="f_sigla"></div>
+          <div class="field"><label>Nome do projeto/empreendimento</label><input type="text" id="f_nome_projeto"></div>
+          <div class="field"><label>Cliente</label><input type="text" id="f_cliente"></div>
+          <div class="field"><label>Localidade</label><input type="text" id="f_localidade"></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Disciplinas desenvolvidas</h2>
+        <div class="chips" id="chipsDisciplinas">
+          <div class="chip" data-v="TERR">Terraplenagem (TERR)</div>
+          <div class="chip" data-v="DRN">Drenagem (DRN)</div>
+          <div class="chip" data-v="SAA">Água (SAA)</div>
+          <div class="chip" data-v="SES">Esgoto (SES)</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Histórico de entregas (_ENVIADOS)</h2>
+        <table id="tabelaEntregas">
+          <thead>
+            <tr>
+              <th style="width:13%">Disciplina</th>
+              <th style="width:13%">Data</th>
+              <th style="width:10%">Revisão</th>
+              <th style="width:18%">Responsável</th>
+              <th>Observações / decisões</th>
+              <th style="width:26%">Pasta</th>
+              <th style="width:26px"></th>
+            </tr>
+          </thead>
+          <tbody id="corpoEntregas"></tbody>
+        </table>
+        <div class="empty" id="entregasVazio" style="display:none;">Nenhuma entrega registrada ainda.</div>
+        <button class="addrow" id="btnAddEntrega">+ Adicionar entrega</button>
+        <div class="hint">A coluna "Pasta" é só referência — não precisa preencher se a entrega ainda não tem pasta.
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    let dados = null;
+    let fileHandle = null;      // handle do arquivo _metadata.json (quando aberto avulso ou via lista)
+    let projetoDirHandle = null; // pasta do projeto atualmente selecionado (para criar o _metadata.json se nao existir)
+    let projetosCache = [];      // [{ nome, dirHandle, sigla, cliente, temMeta }]
+
+    const el = (id) => document.getElementById(id);
+    const statusEl = el('status');
+    const conteudoEl = el('conteudo');
+    const btnSalvar = el('btnSalvar');
+
+    // ---------- Veio do Overview? pega o alvo pela URL (?foco=NOME_DA_PASTA) ----------
+    let focoAlvo = new URLSearchParams(location.search).get('foco');
+    if (focoAlvo) {
+      const banner = el('bannerFoco');
+      banner.style.display = 'block';
+      banner.innerHTML = `Vindo do Overview — use <strong>"Selecionar pasta de projetos"</strong> (ou "Continuar com a pasta salva") para abrir automaticamente <strong>${focoAlvo}</strong>.`;
+    }
+
+    function parseNomePasta(nome) {
+      const partes = nome.split('.');
+      return {
+        numero: partes[0] || "",
+        codigo: partes[1] || "",
+        sigla: partes.slice(2).join('.') || nome
+      };
+    }
+
+    function modeloVazio() {
+      return {
+        numero: "", codigo_cliente: "", sigla: "", nome_projeto: "", cliente: "", localidade: "",
+        disciplinas: [], criado_em: new Date().toISOString().slice(0, 16).replace('T', ' '), entregas: []
+      };
+    }
+
+    function carregarNaTela(json) {
+      dados = json;
+      el('f_numero').value = dados.numero || "";
+      el('f_codigo_cliente').value = dados.codigo_cliente || "";
+      el('f_sigla').value = dados.sigla || "";
+      el('f_nome_projeto').value = dados.nome_projeto || "";
+      el('f_cliente').value = dados.cliente || "";
+      el('f_localidade').value = dados.localidade || "";
+
+      const disciplinas = dados.disciplinas || [];
+      document.querySelectorAll('#chipsDisciplinas .chip').forEach(chip => {
+        chip.classList.toggle('on', disciplinas.includes(chip.dataset.v));
+      });
+
+      renderEntregas(dados.entregas || []);
+      conteudoEl.style.display = 'block';
+      btnSalvar.disabled = false;
+    }
+
+    function renderEntregas(lista) {
+      const corpo = el('corpoEntregas');
+      corpo.innerHTML = "";
+      el('entregasVazio').style.display = lista.length ? 'none' : 'block';
+      lista.forEach((entrega, i) => corpo.appendChild(linhaEntrega(entrega, i)));
+    }
+
+    function linhaEntrega(entrega, index) {
+      const tr = document.createElement('tr');
+      tr.dataset.index = index;
+
+      const tdDisc = document.createElement('td');
+      const sel = document.createElement('select');
+      ["TERR", "DRN", "SAA", "SES"].forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v; opt.textContent = v;
+        if ((entrega.disciplina || "") === v) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      tdDisc.appendChild(sel);
+
+      const campos = ['data', 'revisao', 'responsavel', 'observacoes', 'pasta'];
+      const tds = campos.map(campo => {
+        const td = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.value = entrega[campo] || "";
+        inp.dataset.campo = campo;
+        td.appendChild(inp);
+        return td;
+      });
+
+      const tdBtn = document.createElement('td');
+      const btnDel = document.createElement('button');
+      btnDel.className = 'rowbtn';
+      btnDel.title = 'Remover entrega';
+      btnDel.textContent = '✕';
+      btnDel.addEventListener('click', () => {
+        tr.remove();
+        const restantes = document.querySelectorAll('#corpoEntregas tr').length;
+        el('entregasVazio').style.display = restantes ? 'none' : 'block';
+      });
+      tdBtn.appendChild(btnDel);
+
+      tr.appendChild(tdDisc);
+      tds.forEach(td => tr.appendChild(td));
+      tr.appendChild(tdBtn);
+      tr._selDisciplina = sel;
+      return tr;
+    }
+
+    el('btnAddEntrega').addEventListener('click', () => {
+      el('entregasVazio').style.display = 'none';
+      const corpo = el('corpoEntregas');
+      corpo.appendChild(linhaEntrega({ disciplina: "TERR", registrado_em: new Date().toISOString().slice(0, 16).replace('T', ' ') }, corpo.children.length));
+    });
+
+    document.querySelectorAll('#chipsDisciplinas .chip').forEach(chip => {
+      chip.addEventListener('click', () => chip.classList.toggle('on'));
+    });
+
+    function coletarDaTela() {
+      const disciplinas = [...document.querySelectorAll('#chipsDisciplinas .chip.on')].map(c => c.dataset.v);
+      const entregas = [...document.querySelectorAll('#corpoEntregas tr')].map(tr => {
+        const inputs = tr.querySelectorAll('input[type=text]');
+        const obj = { disciplina: tr._selDisciplina.value };
+        inputs.forEach(inp => obj[inp.dataset.campo] = inp.value);
+        return obj;
+      });
+
+      return {
+        numero: el('f_numero').value,
+        codigo_cliente: el('f_codigo_cliente').value,
+        sigla: el('f_sigla').value,
+        nome_projeto: el('f_nome_projeto').value,
+        cliente: el('f_cliente').value,
+        localidade: el('f_localidade').value,
+        disciplinas,
+        criado_em: (dados && dados.criado_em) || new Date().toISOString().slice(0, 16).replace('T', ' '),
+        entregas
+      };
+    }
+
+    // ---------- Guarda a pasta escolhida entre sessoes (IndexedDB) ----------
+    const DB_NOME = 'addamento_config';
+    const DB_STORE = 'handles';
+    const CHAVE_PASTA = 'pastaProjetos';
+
+    function idbAbrir() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NOME, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    async function idbSet(chave, valor) {
+      const db = await idbAbrir();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_STORE, 'readwrite');
+        tx.objectStore(DB_STORE).put(valor, chave);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+    async function idbGet(chave) {
+      const db = await idbAbrir();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_STORE, 'readonly');
+        const req = tx.objectStore(DB_STORE).get(chave);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function lerPastaProjetos(dirHandle) {
+      statusEl.textContent = 'Lendo projetos em "' + dirHandle.name + '"...';
+      projetosCache = [];
+
+      for await (const [nome, handle] of dirHandle.entries()) {
+        if (handle.kind !== 'directory') continue;
+        if (nome.startsWith('_') || nome.startsWith('.')) continue;
+
+        let temMeta = false, sigla = parseNomePasta(nome).sigla, cliente = "";
+        try {
+          const metaHandle = await handle.getFileHandle('_metadata.json');
+          temMeta = true;
+          const texto = await (await metaHandle.getFile()).text();
+          const meta = JSON.parse(texto);
+          sigla = meta.sigla || sigla;
+          cliente = meta.cliente || "";
+        } catch (e) { /* sem metadata ainda, ok */ }
+
+        projetosCache.push({ nome, dirHandle: handle, sigla, cliente, temMeta });
+      }
+
+      projetosCache.sort((a, b) => a.sigla.localeCompare(b.sigla));
+      el('secaoProjetos').style.display = 'block';
+      renderListaProjetos();
+      statusEl.textContent = `${projetosCache.length} projeto(s) encontrados — escolha um abaixo`;
+
+      if (focoAlvo) {
+        const alvoLower = focoAlvo.toLowerCase();
+        const encontrado = projetosCache.find(p => p.nome.toLowerCase() === alvoLower || p.sigla.toLowerCase() === alvoLower);
+        if (encontrado) {
+          el('bannerFoco').style.display = 'none';
+          renderListaProjetos();
+          const rowEl = [...document.querySelectorAll('.projrow')].find(r => r.querySelector('.nome').textContent.includes(encontrado.sigla));
+          await abrirProjeto(encontrado, rowEl || null);
+        } else {
+          el('bannerFoco').innerHTML = `Não encontrei "${focoAlvo}" nesta pasta — escolha o projeto manualmente na lista abaixo.`;
+        }
+        focoAlvo = null;
+      }
+    }
+
+    async function tentarRetomarPastaSalva() {
+      if (!window.showDirectoryPicker) return;
+      try {
+        const handle = await idbGet(CHAVE_PASTA);
+        if (!handle) return;
+        const perm = await handle.queryPermission({ mode: 'readwrite' });
+        if (perm === 'granted') {
+          await lerPastaProjetos(handle);
+        } else {
+          el('btnRetomarPasta').style.display = 'inline-block';
+          el('btnRetomarPasta').textContent = 'Continuar com "' + handle.name + '"';
+          statusEl.textContent = 'Pasta salva encontrada — clique para continuar (o navegador exige a confirmação).';
+        }
+      } catch (e) { /* sem pasta salva ainda, segue fluxo normal */ }
+    }
+
+    el('btnRetomarPasta').addEventListener('click', async () => {
+      const handle = await idbGet(CHAVE_PASTA);
+      if (!handle) return;
+      try {
+        const perm = await handle.requestPermission({ mode: 'readwrite' });
+        if (perm === 'granted') {
+          el('btnRetomarPasta').style.display = 'none';
+          await lerPastaProjetos(handle);
+        } else {
+          statusEl.textContent = 'Permissão não concedida para a pasta salva.';
+        }
+      } catch (e) {
+        alert('Não foi possível reabrir a pasta salva: ' + e.message);
+      }
+    });
+
+    // ---------- Selecionar pasta de projetos ----------
+    el('btnPasta').addEventListener('click', async () => {
+      if (!window.showDirectoryPicker) {
+        alert('Seu navegador não suporta selecionar uma pasta inteira para isso (funciona no Chrome/Edge). Use "Abrir um _metadata.json avulso".');
+        return;
+      }
+      try {
+        const dirHandle = await window.showDirectoryPicker();
+        await idbSet(CHAVE_PASTA, dirHandle);
+        el('btnRetomarPasta').style.display = 'none';
+        await lerPastaProjetos(dirHandle);
+      } catch (e) {
+        if (e.name !== 'AbortError') alert('Não foi possível ler a pasta: ' + e.message);
+      }
+    });
+
+    el('buscaProjeto').addEventListener('input', renderListaProjetos);
+
+    function renderListaProjetos() {
+      const filtro = (el('buscaProjeto').value || '').toLowerCase();
+      const lista = el('listaProjetos');
+      lista.innerHTML = '';
+
+      const filtrados = projetosCache.filter(p => {
+        if (!filtro) return true;
+        return [p.nome, p.sigla, p.cliente].join(' ').toLowerCase().includes(filtro);
+      });
+
+      if (!filtrados.length) {
+        lista.innerHTML = '<div class="empty">Nenhum projeto encontrado.</div>';
+        return;
+      }
+
+      filtrados.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'projrow';
+        row.innerHTML = `
+      <div>
+        <div class="nome">${p.sigla}${p.cliente ? ' — ' + p.cliente : ''}</div>
+        <p class="sub">${p.nome}</p>
+      </div>
+      ${p.temMeta ? '' : '<span class="badge-falta">sem metadados ainda</span>'}
+    `;
+        row.addEventListener('click', () => abrirProjeto(p, row));
+        lista.appendChild(row);
+      });
+    }
+
+    async function abrirProjeto(projeto, rowEl) {
+      document.querySelectorAll('.projrow').forEach(r => r.classList.remove('ativo'));
+      if (rowEl) rowEl.classList.add('ativo');
+
+      projetoDirHandle = projeto.dirHandle;
+
+      if (projeto.temMeta) {
+        try {
+          fileHandle = await projeto.dirHandle.getFileHandle('_metadata.json');
+          const texto = await (await fileHandle.getFile()).text();
+          carregarNaTela(JSON.parse(texto));
+          statusEl.textContent = `Editando: ${projeto.nome} (salvar grava direto na pasta do projeto)`;
+        } catch (e) {
+          alert('Não foi possível abrir os metadados desse projeto: ' + e.message);
+          return;
+        }
+      } else {
+        fileHandle = null; // sera criado ao salvar
+        const modelo = modeloVazio();
+        const partes = parseNomePasta(projeto.nome);
+        modelo.numero = partes.numero;
+        modelo.codigo_cliente = partes.codigo;
+        modelo.sigla = partes.sigla;
+        carregarNaTela(modelo);
+        statusEl.textContent = `Novo projeto: ${projeto.nome} — preencha e salve para criar o _metadata.json`;
+      }
+
+      conteudoEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ---------- Abrir arquivo avulso ----------
+    el('btnAbrir').addEventListener('click', async () => {
+      projetoDirHandle = null;
+      if (window.showOpenFilePicker) {
+        try {
+          const [handle] = await window.showOpenFilePicker({
+            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+          });
+          fileHandle = handle;
+          const file = await handle.getFile();
+          const texto = await file.text();
+          carregarNaTela(JSON.parse(texto));
+          statusEl.textContent = 'Aberto: ' + file.name + ' (salvar substitui o mesmo arquivo)';
+        } catch (e) {
+          if (e.name !== 'AbortError') alert('Não foi possível abrir o arquivo: ' + e.message);
+        }
+      } else {
+        el('fileInput').click();
+      }
+    });
+
+    el('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      fileHandle = null;
+      projetoDirHandle = null;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          carregarNaTela(JSON.parse(reader.result));
+          statusEl.textContent = 'Aberto: ' + file.name + ' (salvar vai baixar um novo arquivo)';
+        } catch (err) {
+          alert('Este arquivo não parece ser um _metadata.json válido.');
+        }
+      };
+      reader.readAsText(file, 'UTF-8');
+    });
+
+    el('btnNovo').addEventListener('click', () => {
+      fileHandle = null;
+      projetoDirHandle = null;
+      carregarNaTela(modeloVazio());
+      statusEl.textContent = 'Novo arquivo em branco (salvar vai baixar o _metadata.json)';
+    });
+
+    // ---------- Salvar ----------
+    el('btnSalvar').addEventListener('click', async () => {
+      const novo = coletarDaTela();
+      const texto = JSON.stringify(novo, null, 2);
+
+      if (!fileHandle && projetoDirHandle) {
+        try {
+          fileHandle = await projetoDirHandle.getFileHandle('_metadata.json', { create: true });
+        } catch (e) {
+          alert('Não foi possível criar o _metadata.json nesta pasta: ' + e.message);
+        }
+      }
+
+      if (fileHandle) {
+        try {
+          const writable = await fileHandle.createWritable();
+          await writable.write(texto);
+          await writable.close();
+          statusEl.textContent = 'Salvo em ' + fileHandle.name + ' às ' + new Date().toLocaleTimeString();
+          return;
+        } catch (e) {
+          alert('Não foi possível salvar direto no arquivo original: ' + e.message + '\nVou gerar o arquivo para download.');
+        }
+      }
+
+      const blob = new Blob([texto], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '_metadata.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      statusEl.textContent = 'Arquivo baixado — mova-o para a pasta do projeto substituindo o antigo.';
+    });
+
+    tentarRetomarPastaSalva();
+
+  </script>
+</body>
+
+</html>
