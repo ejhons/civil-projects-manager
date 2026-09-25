@@ -1,4 +1,4 @@
-# Sistema de Automação de Projetos — Addamento
+# Sistema de Automação de Projetos
 
 Conjunto de scripts (Windows `.bat` + PowerShell) e ferramentas visuais (HTML) para padronizar a criação, entrega, revisão e documentação de projetos de Terraplenagem, Drenagem, Esgoto e Rede de Água.
 
@@ -9,49 +9,60 @@ Tudo roda localmente, sem instalar nada além do que o Windows já traz (cmd, Po
 ## 1. Estrutura de pastas
 
 ```
-Projetos em Andamento\
+Projetos\							   ← pasta raíz onde ficam os projetos
 ├── .Scripts\                          ← todos os scripts ficam aqui
-│   ├── painel.bat
-│   ├── config.json                    ← nomes/formatos de pasta centralizados
-│   ├── PastasConfig.ps1                ← módulo lido por todos os .ps1
-│   ├── criar_estrutura_projeto.bat
-│   ├── criar_estrutura.ps1
-│   ├── criar_metadata.ps1
-│   ├── criar_pasta_enviados.bat
-│   ├── criar_pasta_entrega.ps1
-│   ├── registrar_entrega.ps1
-│   ├── adicionar-recebido.bat
-│   ├── criar_revisao.bat
-│   ├── criar_revisao.ps1
-│   ├── aprovar_enviado.bat
-│   ├── limpar_bkp.bat
-│   ├── limpar_bkp.ps1
-│   ├── adicionar-anotacao.bat
-│   ├── adicionar_anotacao.ps1
-│   ├── criar_metadata_retroativo.bat
-│   ├── inicializar_metadata_existente.ps1
-│   ├── editor_metadados.html
-│   └── overview_projetos.html
+│   ├── pmng.bat					   ← comando principal
+│   ├── config
+│   │   ├── config.json                ← nomes/formatos de pasta centralizados
+│   │   └── PastasConfig.ps1           ← módulo lido por todos os .ps1
+│   │   
+│   ├── bat
+│   │   ├── criar_estrutura_projeto.bat
+│   │   ├── criar_pasta_enviados.bat
+│   │   ├── adicionar-recebido.bat
+│   │   ├── criar_revisao.bat
+│   │   ├── aprovar_enviado.bat
+│   │   ├── limpar_bkp.bat
+│   │   ├── adicionar-anotacao.bat
+│   │   └── criar_metadata_retroativo.bat
+│   │   
+│   ├── ps1
+│   │   ├── criar_metadata.ps1
+│   │   ├── criar_estrutura.ps1
+│   │   ├── criar_pasta_entrega.ps1
+│   │   ├── registrar_entrega.ps1
+│   │   ├── criar_revisao.ps1
+│   │   ├── limpar_bkp.ps1
+│   │   ├── adicionar_anotacao.ps1
+│   │   └── inicializar_metadata_existente.ps1
+│   │   
+│   ├── views
+│   │   ├── editor_metadados.html
+│   │   └── overview_projetos.html
+│   │   
+│   └── assets
+│       └── icons
+│           ├── favico.ico         ← ícone atribuido ao chamar views e instalar
+│           └── logo.png           ← Logo para apresentar em view (não 
+|									  implementado ainda)
 │
-├── 261.MRU.BVEUS2\                    ← um projeto = NUMERO.CODIGOCLIENTE.SIGLA
-│   ├── _metadata.json                 ← "banco de dados" do projeto
+├── 261.TCJ.PMNG\                  ← um projeto = NUMERO.CODIGOCLIENTE.SIGLA
+│   ├── _metadata.json             ← "banco de dados" do projeto
 │   ├── 00.BASE\
 │   │   ├── _BACKUP\
 │   │   └── 01.QTO\
 │   ├── 01.TERRAPLENAGEM\
 │   │   ├── 01.DESENHOS\
-│   │   │   ├── _PDF R01\              ← staging temporário da revisão em andamento
+│   │   │   ├── _BKP\                   	← backups de revisões já entregues
+│   │   │   │   └── PROJETO ENTREGUE R00\
+│   │   │   ├── _PDF R01\              		← staging temporário da revisão em andamento
 │   │   │   │   ├── PDF\
 │   │   │   │   ├── DWG\
 │   │   │   │   ├── CAD\
 │   │   │   │   └── C3D\
-│   │   │   ├── _BKP\                  ← backups de revisões já entregues
-│   │   │   │   └── PROJETO ENTREGUE R00\
 │   │   │   ├── 01.IMG\
 │   │   │   └── 02.BLK\
 │   │   ├── 02.DOCUMENTOS\
-│   │   │   ├── _BKP\
-│   │   │   │   └── PROJETO ENTREGUE R00\
 │   │   │   ├── 00.BRIEFING\
 │   │   │   ├── 01.CUBAÇÃO\
 │   │   │   ├── 02.PAVIMENTAÇÃO\
@@ -62,6 +73,7 @@ Projetos em Andamento\
 │   ├── 02.DRENAGEM\        (mesma lógica de 01.DESENHOS / 02.DOCUMENTOS)
 │   ├── 03.ESGOTO\          (idem)
 │   ├── 04.REDE DE ÁGUA\    (idem, com pasta extra 03.EPANET)
+│   │   
 │   ├── _ENVIADOS\
 │   │   └── BVEUS2 TERR 2026.09.17 R01\
 │   │       ├── 01.DESENHOS\
@@ -71,8 +83,10 @@ Projetos em Andamento\
 │   │       └── 02.DOCUMENTOS\
 │   │           ├── 01.ANEXOS\
 │   │           └── 02.CUBAÇÃO\        (só para TERR)
+│   │   
 │   ├── _RECEBIDOS\
 │   │   └── 2026.06.30 - TOPOGRAFIA - EMAIL\
+│   │   
 │   └── _REFERÊNCIAS\
 │
 └── 260.XXX.OUTRO\
@@ -81,12 +95,12 @@ Projetos em Andamento\
 
 ### Códigos de disciplina usados em todo o sistema
 
-| Código  | Disciplina    | Pasta correspondente |
-| -------- | ------------- | -------------------- |
-| `TERR` | Terraplenagem | `01.TERRAPLENAGEM` |
-| `DRN`  | Drenagem      | `02.DRENAGEM`      |
-| `SES`  | Esgoto        | `03.ESGOTO`        |
-| `SAA`  | Água         | `04.REDE DE ÁGUA` |
+| Código | Disciplina    | Pasta correspondente |
+| ------- | ------------- | -------------------- |
+| `TER` | Terraplenagem | `01.TERRAPLENAGEM` |
+| `DRN` | Drenagem      | `02.DRENAGEM`      |
+| `SES` | Esgoto        | `03.ESGOTO`        |
+| `SAA` | Água         | `04.REDE DE ÁGUA` |
 
 Ao digitar nos scripts, `TER` é aceito como sinônimo de `TERR`.
 
@@ -149,7 +163,7 @@ O que está no `config.json`:
 
 ## 3. Instalação / configuração inicial
 
-1. Copie a pasta `.Scripts` (com todos os arquivos) para dentro de **"Projetos em Andamento"**.
+1. Copie a pasta `.Scripts` (com todos os arquivos) para a raíz do diretório de **Projetos**. (para exemplificar, usaremos uma pasta com o nome de **"Projetos em Andamento")**.
 2. (Opcional, recomendado) Adicione `...\Projetos em Andamento\.Scripts` à variável de ambiente **PATH** do Windows, para poder digitar
    `adicionar-recebido` de qualquer lugar do `cmd`:
    - `Win` → "variáveis de ambiente" → Editar as variáveis de ambiente do sistema → Variáveis de Ambiente → Path (do usuário) → Editar → Novo → cole o caminho da pasta `.Scripts` → OK em tudo → abra um novo `cmd`.
@@ -278,7 +292,7 @@ Nunca apaga pastas `PROJETO ENTREGUE RXX` — são o que deve permanecer.
 
 Registro rápido de uma observação/decisão ligada a um projeto (e, opcionalmente, a uma disciplina e revisão específicas), sem precisar abrir o editor de metadados. Como `adicionar-recebido.bat`, pode ser chamado de qualquer pasta do computador se o PATH estiver configurado (seção 3).
 
-**Pede:** 
+**Pede:**
 
 - índice do projeto;
 - disciplina (opcional — em branco vira uma anotação "GERAL", não ligada a nenhuma disciplina);
@@ -413,10 +427,10 @@ Cada projeto tem um `_metadata.json` na sua raiz:
 1. **Criar o projeto** → `criar_estrutura_projeto.bat` (opção 1 do painel).
 2. **Elaborar** os desenhos/documentos normalmente em `01.DESENHOS` e `02.DOCUMENTOS` (arquivos com `-R00` no nome).
 3. Quando estiver pronto para gerar PDFs para revisão interna, colocar os arquivos em `01.DESENHOS\_PDF R00\{PDF,DWG,CAD,C3D}` (ainda manual —não há comando para isso).
-4. **Aprovar** os arquivos revisados internamente → `aprovar_enviado.bat` (opção 5) — move para `_ENVIADOS`, prontos para assinatura do engenheiro responsável.
+4. **Aprovar** os arquivos revisados internamente → `aprovar_enviado.bat` (opção 5) — copia para `_ENVIADOS`, prontos para assinatura do engenheiro responsável.
 5. **Registrar a entrega** → `criar_pasta_enviados.bat` (opção 2), se ainda não tiver sido criada automaticamente pelo passo anterior — grava no histórico quem trabalhou e observações.
 6. Cliente manda comentários / nova topografia → **Adicionar recebido** (opção 3).
-7. Chegou a hora de nova revisão → **Criar revisão** (opção 4) — arquiva os arquivos atuais em `_BKP\PROJETO ENTREGUE R0X` e renomeia para `-R0(X+1)`.
+7. Chegou a hora de nova revisão → **Criar revisão** (opção 4) — arquiva os arquivos atuais em `_BKP\PROJETO ENTREGUE R0X` e renomeia (caso desejado) para `-R0(X+1)`.
 8. Repete os passos 2 a 7 a cada ciclo de revisão.
 9. De vez em quando → **Limpar _BKP** (opção 6) para tirar lixo acumulado, mantendo só os backups de "projeto entregue".
 10. Para consultar o panorama geral → **Overview de projetos** (opção 9), e para corrigir algo pontual → **Editor de metadados** (opção 8).

@@ -16,10 +16,12 @@
     ".jpeg",
     ".png",
     ".tif",
-    ".tiff"
+    ".tiff",
+    "doc",
+    "docx"
   ],
   "estrutura_base": [
-    "00.BASE\\_BACKUP",
+    "00.BASE\\_BKP",
     "00.BASE\\01.QTO",
     "_RECEBIDOS",
     "_REFERENCIAS",
