@@ -1,9 +1,9 @@
 param(
-    [Parameter(Mandatory=$true)][string]$Root,
-    [Parameter(Mandatory=$true)][string]$Disciplina
+    [Parameter(Mandatory = $true)][string]$Root,
+    [Parameter(Mandatory = $true)][string]$Disciplina
 )
 
-. (Join-Path $PSScriptRoot "PastasConfig.ps1")
+. (Join-Path $PSScriptRoot "..\..\config\PastasConfig.ps1")
 
 $pastaRelativa = Get-PastaDisciplina $Disciplina
 if (-not $pastaRelativa) {
@@ -18,15 +18,15 @@ if (-not (Test-Path $pastaDisciplina)) {
 }
 
 $extensoes = Get-ExtensoesRevisao
-$pastaDesenhos   = Join-Path $pastaDisciplina "01.DESENHOS"
+$pastaDesenhos = Join-Path $pastaDisciplina "01.DESENHOS"
 $pastaDocumentos = Join-Path $pastaDisciplina "02.DOCUMENTOS"
-$metaPath        = Join-Path $Root "_metadata.json"
+$metaPath = Join-Path $Root "_metadata.json"
 
 # ---------- Sugestao de revisao atual (metadados + nomes de arquivo) ----------
 function ObterMaxRevisaoArquivos($pasta) {
     if (-not (Test-Path $pasta)) { return $null }
     $arquivos = Get-ChildItem -Path $pasta -File -ErrorAction SilentlyContinue |
-        Where-Object { $extensoes -contains $_.Extension.ToLower() }
+    Where-Object { $extensoes -contains $_.Extension.ToLower() }
     $max = -1
     foreach ($a in $arquivos) {
         if ($a.BaseName -match '(?i)-R(\d{2})') {
@@ -37,10 +37,19 @@ function ObterMaxRevisaoArquivos($pasta) {
     if ($max -ge 0) { return $max } else { return $null }
 }
 
-$revArqDesenhos   = ObterMaxRevisaoArquivos $pastaDesenhos
+$revArqDesenhos = ObterMaxRevisaoArquivos $pastaDesenhos
 $revArqDocumentos = ObterMaxRevisaoArquivos $pastaDocumentos
-$revArquivos = @($revArqDesenhos, $revArqDocumentos) | Where-Object { $_ -ne $null } |
-    Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
+# $revArquivos = @($revArqDesenhos, $revArqDocumentos) | Where-Object { $_ -ne $null } |
+# Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
+$revArquivos = $null
+$arrayValidos = @($revArqDesenhos, $revArqDocumentos) | Where-Object { $_ -ne $null }
+if ($arrayValidos) {
+    $revArquivos = [int]($arrayValidos | Measure-Object -Maximum).Maximum
+}
+
+
+Write-Host ("  Ultima revisao no _metadata.json: R{0}" -f $revArqDesenhos)
+Write-Host ("  Ultima revisao no _metadata.json: R{0}" -f $revArqDocumentos)
 
 $revMeta = $null
 if (Test-Path $metaPath) {
@@ -50,14 +59,15 @@ if (Test-Path $metaPath) {
             $nums = @($meta.entregas) | Where-Object { $_.disciplina -eq $Disciplina } | ForEach-Object {
                 if ($_.revisao -match '(?i)R(\d{2})') { [int]$Matches[1] }
             }
-            if ($nums) { $revMeta = ($nums | Measure-Object -Maximum).Maximum }
+            if ($nums) { $revMeta = [int]($nums | Measure-Object -Maximum).Maximum }
         }
-    } catch { }
+    }
+    catch { }
 }
 
 Write-Host ""
 Write-Host "=== $Disciplina ==="
-if ($null -ne $revMeta)     { Write-Host ("  Ultima revisao no _metadata.json: R{0:D2}" -f $revMeta) }
+if ($null -ne $revMeta) { Write-Host ("  Ultima revisao no _metadata.json: R{0:D2}" -f $revMeta) }
 if ($null -ne $revArquivos) { Write-Host ("  Maior revisao encontrada nos arquivos: R{0:D2}" -f $revArquivos) }
 if ($null -eq $revMeta -and $null -eq $revArquivos) {
     Write-Host "  Nenhuma revisao anterior encontrada (nem nos metadados, nem nos arquivos)."
@@ -65,12 +75,13 @@ if ($null -eq $revMeta -and $null -eq $revArquivos) {
 
 $sugestao = $null
 $candidatos = @($revMeta, $revArquivos) | Where-Object { $_ -ne $null }
-if ($candidatos) { $sugestao = ($candidatos | Measure-Object -Maximum).Maximum }
+if ($candidatos) { $sugestao = [int]($candidatos | Measure-Object -Maximum).Maximum }
 $sugestaoTexto = if ($null -ne $sugestao) { "R{0:D2}" -f $sugestao } else { "" }
 
 $prompt = if ($sugestaoTexto -ne "") {
     "Qual a revisao ATUAL de $Disciplina (a que sera arquivada)? [Enter = $sugestaoTexto]"
-} else {
+}
+else {
     "Qual a revisao ATUAL de $Disciplina (ex: R00)?"
 }
 $entrada = Read-Host $prompt
@@ -82,9 +93,9 @@ if ($entrada -notmatch '^R(\d{2})$') {
     exit 1
 }
 $numAtual = [int]$Matches[1]
-$numNova  = $numAtual + 1
+$numNova = $numAtual + 1
 $revAtualStr = "R{0:D2}" -f $numAtual
-$revNovaStr  = "R{0:D2}" -f $numNova
+$revNovaStr = "R{0:D2}" -f $numNova
 
 Write-Host "Revisao atual: $revAtualStr  ->  Nova revisao: $revNovaStr"
 Write-Host ""
@@ -97,7 +108,7 @@ function ProcessarPasta($pastaOrigem, $rotulo) {
     }
 
     $arquivos = Get-ChildItem -Path $pastaOrigem -File -ErrorAction SilentlyContinue |
-        Where-Object { $extensoes -contains $_.Extension.ToLower() }
+    Where-Object { $extensoes -contains $_.Extension.ToLower() }
 
     if (-not $arquivos) {
         Write-Host "  Nenhum arquivo dwg/xlsx/imagem encontrado em $rotulo."
@@ -114,13 +125,25 @@ function ProcessarPasta($pastaOrigem, $rotulo) {
 
     $padraoAtual = "-$revAtualStr"
     $renomeados = 0
+
+    
+    Write-Host ""    
+    $confirmacao = Read-Host "Digite SIM para renomear os arquivos indicados com a revisão $padraoAtual (qualquer outra coisa cancela)"
+
+
+    if ($confirmacao -ne "SIM") {
+        Write-Host "Cancelado - Arquivos na pasta não foram renomeados."
+        return
+    }
+
     foreach ($a in $arquivos) {
         if ($a.Name -match [regex]::Escape($padraoAtual)) {
             $novoNome = [regex]::Replace($a.Name, [regex]::Escape($padraoAtual), "-$revNovaStr", 'IgnoreCase')
             $novoCaminho = Join-Path $pastaOrigem $novoNome
             if (Test-Path $novoCaminho) {
                 Write-Host "  AVISO: ja existe '$novoNome' - nao renomeei '$($a.Name)'"
-            } else {
+            }
+            else {
                 Rename-Item -LiteralPath $a.FullName -NewName $novoNome
                 $renomeados++
             }

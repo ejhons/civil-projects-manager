@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 :: SCRIPTDIR = onde este .bat e seus .ps1 estao (ex: .Scripts)
-set "SCRIPTDIR=%~dp0..\..\config"
+set "SCRIPTDIR=%~dp0.."
 if "%SCRIPTDIR:~-1%"=="\" set "SCRIPTDIR=%SCRIPTDIR:~0,-1%"
 
 :: BASE = pasta de projetos, um nivel acima de .Scripts
@@ -66,15 +66,18 @@ if not defined DISCS (
     exit /b 1
 )
 
+
 for %%D in (%DISCS%) do (
     set "COD="
-    for /f "usebackq delims=" %%V in (`powershell -NoProfile -Command ". '%SCRIPTDIR%\PastasConfig.ps1'; Resolve-Disciplina '%%D'"`) do set "COD=%%V"
-
+    for /f "usebackq delims=" %%V in (`powershell -NoProfile -Command ". '%SCRIPTDIR%\..\config\PastasConfig.ps1'; Resolve-Disciplina '%%D'"`) do set "COD=%%V"
+    
     if not defined COD (
         echo.
         echo Disciplina invalida, ignorada: %%D
     ) else (
-        powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPTDIR%\criar_revisao.ps1" -Root "!PROJDIR!" -Disciplina "!COD!"
+        echo "%COD%"
+        echo "%PROJDIR%"
+        powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPTDIR%\ps1\criar_revisao.ps1" -Root "!PROJDIR!" -Disciplina "!COD!"
     )
 )
 

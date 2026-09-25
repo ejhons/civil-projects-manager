@@ -160,19 +160,19 @@ echo   Movendo arquivos aprovados de 01.DESENHOS
 echo ============================================
 
 if exist "!SRC_PDF!\PDF" (
-    robocopy "!SRC_PDF!\PDF" "!DESTINO!\01.DESENHOS\01.PDF" /MOV /R:2 /W:2 >nul
+    robocopy "!SRC_PDF!\PDF" "!DESTINO!\01.DESENHOS\01.PDF" /R:2 /W:2 >nul
     echo   PDF: movido de _PDF !REV!\PDF
 )
 if exist "!SRC_PDF!\DWG" (
-    robocopy "!SRC_PDF!\DWG" "!DESTINO!\01.DESENHOS\02.DWG" /MOV /R:2 /W:2 >nul
+    robocopy "!SRC_PDF!\DWG" "!DESTINO!\01.DESENHOS\02.DWG" /R:2 /W:2 >nul
     echo   DWG: movido de _PDF !REV!\DWG
 )
 if exist "!SRC_PDF!\CAD" (
-    robocopy "!SRC_PDF!\CAD" "!DESTINO!\01.DESENHOS\02.DWG" /MOV /R:2 /W:2 >nul
+    robocopy "!SRC_PDF!\CAD" "!DESTINO!\01.DESENHOS\02.DWG" /R:2 /W:2 >nul
     echo   CAD: movido de _PDF !REV!\CAD
 )
 if exist "!SRC_PDF!\C3D" (
-    robocopy "!SRC_PDF!\C3D" "!DESTINO!\01.DESENHOS\02.DWG" /MOV /R:2 /W:2 >nul
+    robocopy "!SRC_PDF!\C3D" "!DESTINO!\01.DESENHOS\03.C3D" /R:2 /W:2 >nul
     echo   C3D: movido de _PDF !REV!\C3D
 )
 

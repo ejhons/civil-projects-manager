@@ -72,7 +72,7 @@ if /i "!DISCS!"=="TODAS" set "DISCS=TER DRN SAA SES"
 
 for %%D in (%DISCS%) do (
     set "COD="
-    for /f "usebackq delims=" %%V in (`powershell -NoProfile -Command ". '%SCRIPTDIR%..\config\PastasConfig.ps1'; Resolve-Disciplina '%%D'"`) do set "COD=%%V"
+    for /f "usebackq delims=" %%V in (`powershell -NoProfile -Command ". '%SCRIPTDIR%\..\config\PastasConfig.ps1'; Resolve-Disciplina '%%D'"`) do set "COD=%%V"
 
     if not defined COD (
         echo.
